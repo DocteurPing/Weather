@@ -3,6 +3,7 @@ package com.example.drping.weather
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Response
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var tempText: TextView
     lateinit var weatherText: TextView
+    lateinit var weatherIcon: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     fun updateWeather(view: View) {
         tempText = findViewById(R.id.temp_text)
         weatherText = findViewById(R.id.weather_text)
+        weatherIcon = findViewById(R.id.weather_icon)
         val request = StringRequest(url, Response.Listener { string -> parseJsonData(string) },
                 Response.ErrorListener { Toast.makeText(applicationContext, "Some error occurred!!", Toast.LENGTH_SHORT).show() })
         val rQueue = Volley.newRequestQueue(this@MainActivity)
@@ -41,6 +44,14 @@ class MainActivity : AppCompatActivity() {
         val weather = jobject.getJSONArray("weather").getJSONObject(0).getString("main").toString()
         tempText.text = temp
         weatherText.text = weather
+        weatherIcon.setImageResource(getIcon(weather))
     }
 
+    private fun getIcon(weather: String): Int {
+        when(weather) {
+            "Clouds" -> return (R.drawable.clouds)
+            "Rain" -> return (R.drawable.water)
+        }
+        return (R.drawable.sun)
+    }
 }
